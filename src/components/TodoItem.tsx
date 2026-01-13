@@ -8,7 +8,7 @@ import { Todo } from '../types/Todo';
 type Props = {
   todo: Todo;
   isLoading: boolean;
-  onDeleteTodo?: () => void;
+  onDeleteTodo?: () => Promise<void>;
   onToggleTodo?: (todo: Todo) => Promise<void>;
   onUpdateTodo?: (
     todoId: number,
@@ -45,14 +45,13 @@ export const TodoItem: React.FC<Props> = ({
     const trimmed = editedTitle.trim();
 
     if (!trimmed) {
-      onDeleteTodo?.();
-      setIsEditing(false);
+      onDeleteTodo?.()?.then(() => setIsEditing(false));
 
       return;
     }
 
     if (trimmed !== todo.title) {
-      onUpdateTodo?.(todo.id, { title: trimmed }).finally(() =>
+      onUpdateTodo?.(todo.id, { title: trimmed }).then(() =>
         setIsEditing(false),
       );
     } else {

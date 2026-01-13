@@ -89,16 +89,17 @@ export const App: React.FC = () => {
       });
   };
 
-  const handleDeleteTodo = (todoId: number) => {
+  const handleDeleteTodo = (todoId: number): Promise<void> => {
     setDeletingTodoIds(prev => [...prev, todoId]);
 
-    todoService
+    return todoService
       .deleteTodo(todoId)
       .then(() => {
         setTodos(prev => prev.filter(todo => todo.id !== todoId));
       })
       .catch(() => {
         showMessage('Unable to delete a todo');
+        throw new Error();
       })
       .finally(() => {
         setDeletingTodoIds(prev => prev.filter(id => id !== todoId));
